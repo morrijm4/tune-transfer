@@ -66,6 +66,7 @@ export class Session {
       sameSite: isSecure ? 'none' : 'lax',
       maxAge: 60 * 60 * 24,
     });
+    this.#dirty = false;
   }
 
   static #getSecret(): Uint8Array {
