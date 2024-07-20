@@ -7,7 +7,6 @@ import { saveMusicUserToken } from '@/service/apple-music/save-music-user-token'
 import Form from '../ui/form';
 
 export function AppleMusicLoginForm() {
-  const [waiting, setWaiting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +23,6 @@ export function AppleMusicLoginForm() {
           name: 'TuneTransfer',
         },
       });
-
       setIsLoading(false);
     };
 
@@ -35,23 +33,16 @@ export function AppleMusicLoginForm() {
     };
   }, []);
 
-  if (isLoading || waiting) {
-    return <div>loading...</div>;
-  }
-
   return (
     <Form
       action={async () => {
         const music = window.MusicKit?.getInstance();
-        const musicUserToken = music?.authorize();
-
-        setWaiting(true);
-
-        saveMusicUserToken(await musicUserToken);
+        const musicUserToken = await music?.authorize();
+        saveMusicUserToken(musicUserToken);
       }}
     >
       <h1>Apple Music</h1>
-      <SubmitButton>Login</SubmitButton>
+      <SubmitButton disabled={isLoading}>Login</SubmitButton>
     </Form>
   );
 }

@@ -5,15 +5,14 @@ import { AppleMusicLoginForm } from '@/components/apple-music/apple-music-login-
 import { SpotifyLoginForm } from '@/components/spotify/spotify-login-form';
 
 export default async function Home() {
-  await using session = await Session.get();
-  session.print()
+  const session = await Session.get();
 
   if (session.done) {
     return <div>Transfer complete</div>;
   }
 
   if (session.spotify && session.appleMusicUserToken) {
-    return <Button action={transfer}>Transfer</Button>
+    return <Button action={transfer}>Transfer</Button>;
   }
 
   return (
