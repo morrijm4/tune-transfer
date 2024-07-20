@@ -10,7 +10,7 @@ export function Button({ children, action, ...rest }: ButtonProps) {
   const [loading, setLoading] = useState(false);
 
   if (loading) {
-    return <p>loading....</p>;
+    return <p>transferring....</p>;
   }
 
   return (

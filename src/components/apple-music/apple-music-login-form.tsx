@@ -11,8 +11,6 @@ export function AppleMusicLoginForm() {
 
   useEffect(() => {
     const handleMusicKitLoaded = async () => {
-      console.log('MusicKit loaded');
-
       if (typeof window.MusicKit === 'undefined') {
         throw new Error('MusicKit not loaded');
       }
@@ -37,8 +35,12 @@ export function AppleMusicLoginForm() {
     <Form
       action={async () => {
         const music = window.MusicKit?.getInstance();
-        const musicUserToken = await music?.authorize();
-        saveMusicUserToken(musicUserToken);
+        try {
+          const musicUserToken = await music?.authorize();
+          saveMusicUserToken(musicUserToken);
+        } catch (error) {
+          console.error(error);
+        }
       }}
     >
       <h1>Apple Music</h1>
