@@ -1,5 +1,5 @@
 export const clientId = '18d5f94a949240239618039808e2d039';
-export const redirectUrl = 'http://localhost:3000/api/auth?s=spotify';
+export const redirectUrl = process.env.SPOTIFY_REDIRECT_URI!;
 export const state = 'a0ksdjvbwowa8e';
 export const scope = [
   'playlist-modify-private',
