@@ -79,10 +79,16 @@ export class SpotifyAuthCallback implements IAuthCallback {
       redirect('/');
     }
 
+    if (!token.refresh_token) {
+      console.error('No refresh token', token);
+      redirect('/');
+    }
+
     await using session = await Session.get();
 
     session.spotify = {
       accessToken: token.access_token,
+      refreshToken: token.refresh_token,
     };
   }
 

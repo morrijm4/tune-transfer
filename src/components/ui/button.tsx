@@ -1,14 +1,29 @@
 'use client';
 
-import type { ButtonHTMLAttributes } from 'react';
+import { useState, type ButtonHTMLAttributes } from 'react';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   action?: () => void;
 };
 
 export function Button({ children, action, ...rest }: ButtonProps) {
+  const [loading, setLoading] = useState(false);
+
+  if (loading) {
+    return <p>loading....</p>;
+  }
+
   return (
-    <button onClick={() => action?.()} {...rest}>
+    <button
+      onClick={async () => {
+        if (action) {
+          setLoading(true);
+          await action();
+          setLoading(false);
+        }
+      }}
+      {...rest}
+    >
       {children}
     </button>
   );
