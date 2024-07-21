@@ -30,8 +30,6 @@ export async function transfer() {
 
   await Promise.all([transferPlaylists(), transferAlbums()]);
 
-  await new Promise((resolve) => setTimeout(resolve, 1000 * 30));
-
   console.log('Transfer complete');
 
   session.done = true;
