@@ -9,7 +9,8 @@ export default async function Home() {
   return (
     <>
       <h1 className="text-2xl text-center">
-        Transfer your playlists and albums from Apple Music to Spotify.
+        Transfer your playlists, albums, and favorite songs from Apple Music to
+        Spotify.
       </h1>
       {session.spotify && session.appleMusicUserToken && <Transfer />}
       {!session.spotify && <SpotifyLoginForm />}
