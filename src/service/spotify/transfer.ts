@@ -74,7 +74,7 @@ async function transferPlaylists() {
 
 async function transferAlbums() {
   const albums = await appleMusic.getAlbums();
-  const spotifyAlbums = [];
+  let spotifyAlbums = [];
   for await (const album of albums) {
     if (!album.attributes) {
       continue;
@@ -86,8 +86,14 @@ async function transferAlbums() {
     if (spotifyAlbum.body.albums?.items.length) {
       spotifyAlbums.push(spotifyAlbum.body.albums.items[0].id);
     }
+
+    if (spotifyAlbums.length === 50) {
+      await spotify.addToMySavedAlbums(spotifyAlbums);
+      spotifyAlbums = [];
+    }
   }
-  await spotify.api.addToMySavedAlbums(spotifyAlbums);
+
+  await spotify.addToMySavedAlbums(spotifyAlbums);
 }
 
 async function getSpotifyPlaylistId(applePlaylist: Playlist) {

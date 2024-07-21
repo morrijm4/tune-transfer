@@ -37,4 +37,15 @@ export class SpotifyClient {
 
     return map;
   }
+
+  /**
+   * Add an album from the authenticated user's Your Music library.
+   * @param {string[]} albumIds The track IDs
+   * @returns {Promise|undefined} A promise that if successful returns null, otherwise an error. Not returned if a callback is given.
+   */
+  async addToMySavedAlbums(ids: string[]) {
+    if (ids.length) {
+      await this.api.addToMySavedAlbums(ids);
+    }
+  }
 }
