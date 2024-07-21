@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "src/service/spotify/transfer.ts": {
+      "maxDuration": 60
+    }
+  }
+}

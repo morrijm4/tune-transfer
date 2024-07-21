@@ -17,7 +17,7 @@ export class SpotifyClient {
     let offset = 0;
 
     const playlists = await this.api.getUserPlaylists();
-    console.log('Playlists:', playlists);
+
     const total = playlists.body.total;
     offset += playlists.body.items.length;
 
