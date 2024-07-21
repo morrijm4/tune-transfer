@@ -3,6 +3,7 @@ export const state = 'a0ksdjvbwowa8e';
 export const scope = [
   'playlist-modify-private',
   'playlist-modify-public',
+  'playlist-read-private',
   'user-read-private',
   'user-read-email',
   'user-library-modify',

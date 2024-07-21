@@ -10,14 +10,14 @@ export type AppleMusicResponse<TData> = {
   };
 };
 
-export type PlaylistResponse = AppleMusicResponse<Playlist>;
+export type ApplePlaylistResponse = AppleMusicResponse<ApplePlaylist>;
 
-export type Playlist = {
+export type ApplePlaylist = {
   id: string;
-  attributes?: PlaylistAttributes;
+  attributes?: ApplePlaylistAttributes;
 };
 
-export type PlaylistAttributes = {
+export type ApplePlaylistAttributes = {
   name: string;
   isPublic: boolean;
   description?: {
@@ -30,14 +30,14 @@ export type PlaylistAttributes = {
   };
 };
 
-export type PlaylistTracksResponse = AppleMusicResponse<Track>;
+export type ApplePlaylistTracksResponse = AppleMusicResponse<AppleTrack>;
 
-export type Track = {
+export type AppleTrack = {
   id: string;
-  attributes?: TrackAttributes;
+  attributes?: AppleTrackAttributes;
 };
 
-export type TrackAttributes = {
+export type AppleTrackAttributes = {
   albumName?: string;
   genreNames: string[];
   /** @example 2024-07-12 */
@@ -46,14 +46,14 @@ export type TrackAttributes = {
   artistName: string;
 };
 
-export type AlbumsResponse = AppleMusicResponse<Album>;
+export type AppleAlbumsResponse = AppleMusicResponse<AppleAlbum>;
 
-export type Album = {
+export type AppleAlbum = {
   id: string;
-  attributes?: AlbumAttributes;
+  attributes?: AppleAlbumAttributes;
 };
 
-export type AlbumAttributes = {
+export type AppleAlbumAttributes = {
   name: string;
   /** @example 2024-07-12 */
   releaseDate?: string;

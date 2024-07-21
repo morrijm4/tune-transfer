@@ -1,12 +1,12 @@
-import {
-  Album,
-  AlbumsResponse,
+import type {
+  AppleAlbum,
+  AppleAlbumsResponse,
   AppleMusicResponse,
   FetchOptions,
-  Playlist,
-  PlaylistResponse,
-  PlaylistTracksResponse,
-  Track,
+  ApplePlaylist,
+  ApplePlaylistResponse,
+  ApplePlaylistTracksResponse,
+  AppleTrack,
 } from './types';
 
 export class AppleMusicClient {
@@ -86,14 +86,7 @@ export class AppleMusicClient {
       }
     };
 
-    const it = gen();
-
-    return {
-      ...it,
-      [Symbol.asyncIterator]() {
-        return it;
-      },
-    };
+    return gen();
   }
 
   setDeveloperToken(token: string) {
@@ -105,19 +98,19 @@ export class AppleMusicClient {
   }
 
   async getPlaylists() {
-    return this.fetchIter<Playlist, PlaylistResponse>({
+    return this.fetchIter<ApplePlaylist, ApplePlaylistResponse>({
       path: '/v1/me/library/playlists',
     });
   }
 
   async getPlaylistTracks(playlistId: string) {
-    return this.fetchIter<Track, PlaylistTracksResponse>({
+    return this.fetchIter<AppleTrack, ApplePlaylistTracksResponse>({
       path: `/v1/me/library/playlists/${playlistId}/tracks`,
     });
   }
 
   async getAlbums() {
-    return this.fetchIter<Album, AlbumsResponse>({
+    return this.fetchIter<AppleAlbum, AppleAlbumsResponse>({
       path: '/v1/me/library/albums',
     });
   }

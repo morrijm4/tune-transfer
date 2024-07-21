@@ -8,7 +8,7 @@ export function Transfer() {
   const [status, setStatus] = useState<string | null>(null);
 
   if (status === 'done') {
-    return <div>Transfer complete</div>;
+    return <div>Transfer complete!</div>;
   }
 
   if (status === 'transferring') {
@@ -22,6 +22,7 @@ export function Transfer() {
   return (
     <>
       <Button
+        variant="secondary"
         onClick={async () => {
           setStatus('transferring');
           try {

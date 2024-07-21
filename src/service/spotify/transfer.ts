@@ -3,7 +3,8 @@
 import { SpotifyClient } from '@/service/spotify/client';
 import { Session } from '@/lib/session';
 import { AppleMusicClient } from '../apple-music/client';
-import { Playlist } from '../apple-music/types';
+import { ApplePlaylist } from '../apple-music/types';
+import { SpotifyQueryBuilder } from './query-builder';
 
 const spotify = new SpotifyClient();
 const appleMusic = new AppleMusicClient();
@@ -32,55 +33,80 @@ export async function transfer() {
 
   console.log('Transfer complete');
 
-  session.done = true;
-  await session.save();
+  spotify.reset();
 }
 
 async function transferPlaylists() {
-  const applePlaylists = await appleMusic.getPlaylists();
+  const [applePlaylists, spotifyUserPlaylistsMap] = await Promise.all([
+    appleMusic.getPlaylists(),
+    spotify.getUserPlaylistMap(),
+  ]);
 
   for await (const applePlaylist of applePlaylists) {
-    const appleTracks = await appleMusic.getPlaylistTracks(applePlaylist.id);
+    let spotifyTrackIds = [];
+    const [appleTracks, spotifyPlaylistTrackNames] = await Promise.all([
+      appleMusic.getPlaylistTracks(applePlaylist.id),
+      spotify.getPlaylistTracksSet(applePlaylist),
+    ]);
 
-    const spotifyTracks = [];
-    for await (const track of appleTracks) {
-      if (!track.attributes) {
+    for await (const appleTrack of appleTracks) {
+      if (!appleTrack.attributes) {
         continue;
       }
 
-      let query = `track:${track.attributes.name} artist:${track.attributes.artistName}`;
-      if (track.attributes.albumName) {
-        query += ` album:${track.attributes.albumName}`;
-      }
-      const spotifyTrack = await spotify.api.searchTracks(query, { limit: 1 });
+      const query = new SpotifyQueryBuilder()
+        .addAlbum(appleTrack.attributes.albumName)
+        .addArtist(appleTrack.attributes.artistName)
+        .addTrack(appleTrack.attributes.name)
+        .build();
 
-      if (spotifyTrack.body.tracks?.items.length) {
+      const spotifyTracks = await spotify.api.searchTracks(query, { limit: 1 });
+      const tracks = spotifyTracks.body.tracks;
+
+      if (!tracks) {
+        continue;
+      }
+
+      if (spotifyPlaylistTrackNames.has(tracks.items[0].name)) {
+        continue;
+      }
+
+      if (tracks.items.length) {
         const id = isFavoriteSongs(applePlaylist)
-          ? spotifyTrack.body.tracks.items[0].id
-          : spotifyTrack.body.tracks.items[0].uri;
+          ? tracks.items[0].id
+          : tracks.items[0].uri;
 
-        spotifyTracks.push(id);
+        spotifyTrackIds.push(id);
+      }
+
+      if (isFavoriteSongs(applePlaylist) && spotifyTrackIds.length === 50) {
+        await saveTracksToSpotifyPlaylist(applePlaylist, spotifyTrackIds);
+        spotifyTrackIds = [];
+      } else if (spotifyTrackIds.length === 100) {
+        await saveTracksToSpotifyPlaylist(applePlaylist, spotifyTrackIds);
+        spotifyTrackIds = [];
       }
     }
 
-    if (isFavoriteSongs(applePlaylist)) {
-      await spotify.api.addToMySavedTracks(spotifyTracks);
-    } else {
-      const id = await getSpotifyPlaylistId(applePlaylist);
-      await spotify.api.addTracksToPlaylist(id, spotifyTracks);
-    }
+    await saveTracksToSpotifyPlaylist(applePlaylist, spotifyTrackIds);
   }
 }
 
 async function transferAlbums() {
-  const albums = await appleMusic.getAlbums();
   let spotifyAlbums = [];
+
+  const albums = await appleMusic.getAlbums();
+
   for await (const album of albums) {
     if (!album.attributes) {
       continue;
     }
 
-    const query = `album:${album.attributes.name} artist:${album.attributes.artistName}`;
+    const query = new SpotifyQueryBuilder()
+      .addAlbum(album.attributes.name)
+      .addArtist(album.attributes.artistName)
+      .build();
+
     const spotifyAlbum = await spotify.api.searchAlbums(query, { limit: 1 });
 
     if (spotifyAlbum.body.albums?.items.length) {
@@ -96,10 +122,22 @@ async function transferAlbums() {
   await spotify.addToMySavedAlbums(spotifyAlbums);
 }
 
-async function getSpotifyPlaylistId(applePlaylist: Playlist) {
-  const spotifyPlaylistMap = await spotify.getUserPlaylistMap();
+async function saveTracksToSpotifyPlaylist(
+  applePlaylist: ApplePlaylist,
+  spotifyTrackIds: string[]
+) {
+  if (isFavoriteSongs(applePlaylist)) {
+    await spotify.addToMySavedTracks(spotifyTrackIds);
+  } else {
+    const id = await getSpotifyPlaylistId(applePlaylist);
+    await spotify.addTracksToPlaylist(id, spotifyTrackIds);
+  }
+}
 
+async function getSpotifyPlaylistId(applePlaylist: ApplePlaylist) {
+  const spotifyPlaylistMap = await spotify.getUserPlaylistMap();
   const name = applePlaylist.attributes?.name;
+
   if (name && spotifyPlaylistMap.has(name)) {
     return spotifyPlaylistMap.get(name)!;
   }
@@ -115,6 +153,6 @@ async function getSpotifyPlaylistId(applePlaylist: Playlist) {
   return spotifyPlaylist.body.id;
 }
 
-function isFavoriteSongs(playlist: Playlist) {
+function isFavoriteSongs(playlist: ApplePlaylist) {
   return playlist.attributes?.name === 'Favorite Songs';
 }
