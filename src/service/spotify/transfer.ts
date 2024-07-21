@@ -5,6 +5,8 @@ import { Session } from '@/lib/session';
 import { AppleMusicClient } from '../apple-music/client';
 import { Playlist } from '../apple-music/types';
 
+export const maxDuration = 60; // seconds
+
 const spotify = new SpotifyClient();
 const appleMusic = new AppleMusicClient();
 
@@ -103,6 +105,8 @@ async function getSpotifyPlaylistId(applePlaylist: Playlist) {
       public: applePlaylist.attributes?.isPublic,
     }
   );
+
+  await new Promise((resolve) => setTimeout(resolve, 1000 * 30));
 
   return spotifyPlaylist.body.id;
 }
