@@ -32,6 +32,8 @@ export async function transfer() {
 
   await new Promise((resolve) => setTimeout(resolve, 1000 * 30));
 
+  console.log('Transfer complete');
+
   session.done = true;
   await session.save();
 }

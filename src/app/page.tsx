@@ -3,6 +3,8 @@ import { AppleMusicLoginForm } from '@/components/apple-music/apple-music-login-
 import { SpotifyLoginForm } from '@/components/spotify/spotify-login-form';
 import { Transfer } from '@/components/transfer';
 
+export const maxDuration = 60; // seconds
+
 export default async function Home() {
   const session = await Session.get();
 
