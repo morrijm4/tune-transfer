@@ -1,29 +1,12 @@
 'use client';
 
-import { useState, type ButtonHTMLAttributes } from 'react';
+import { type ButtonHTMLAttributes } from 'react';
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  action?: () => void;
-};
+export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function Button({ children, action, ...rest }: ButtonProps) {
-  const [loading, setLoading] = useState(false);
-
-  if (loading) {
-    return <p>transferring....</p>;
-  }
-
+export function Button({ children, ...rest }: ButtonProps) {
   return (
-    <button
-      onClick={async () => {
-        if (action) {
-          setLoading(true);
-          await action();
-          setLoading(false);
-        }
-      }}
-      {...rest}
-    >
+    <button className="border px-4 py-1 rounded" {...rest}>
       {children}
     </button>
   );

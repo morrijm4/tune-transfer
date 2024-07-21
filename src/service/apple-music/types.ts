@@ -14,18 +14,18 @@ export type PlaylistResponse = AppleMusicResponse<Playlist>;
 
 export type Playlist = {
   id: string;
-  attributes: PlaylistAttributes;
+  attributes?: PlaylistAttributes;
 };
 
 export type PlaylistAttributes = {
   name: string;
   isPublic: boolean;
-  description: {
+  description?: {
     standard: string;
   };
-  artwork: {
-    width: number;
-    height: number;
+  artwork?: {
+    width: number | null;
+    height: number | null;
     url: string;
   };
 };
@@ -34,14 +34,14 @@ export type PlaylistTracksResponse = AppleMusicResponse<Track>;
 
 export type Track = {
   id: string;
-  attributes: TrackAttributes;
+  attributes?: TrackAttributes;
 };
 
 export type TrackAttributes = {
-  albumName: string;
+  albumName?: string;
   genreNames: string[];
   /** @example 2024-07-12 */
-  releaseDate: string;
+  releaseDate?: string;
   name: string;
   artistName: string;
 };
@@ -50,12 +50,12 @@ export type AlbumsResponse = AppleMusicResponse<Album>;
 
 export type Album = {
   id: string;
-  attributes: AlbumAttributes;
+  attributes?: AlbumAttributes;
 };
 
 export type AlbumAttributes = {
   name: string;
   /** @example 2024-07-12 */
-  releaseDate: string;
+  releaseDate?: string;
   artistName: string;
 };

@@ -21,7 +21,7 @@ export default async function RootLayout({
       <Script src="https://js-cdn.music.apple.com/musickit/v3/musickit.js" />
       <body className={inter.className}>
         <Nav />
-        <main className="flex flex-col items-center justify-between space-y-16 p-24">
+        <main className="flex flex-col items-center justify-between space-y-16 mt-24 px-8">
           {children}
         </main>
       </body>
