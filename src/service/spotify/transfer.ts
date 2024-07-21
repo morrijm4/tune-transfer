@@ -37,10 +37,7 @@ export async function transfer() {
 }
 
 async function transferPlaylists() {
-  const [applePlaylists, spotifyUserPlaylistsMap] = await Promise.all([
-    appleMusic.getPlaylists(),
-    spotify.getUserPlaylistMap(),
-  ]);
+  const applePlaylists = await appleMusic.getPlaylists();
 
   for await (const applePlaylist of applePlaylists) {
     let spotifyTrackIds = [];
@@ -57,27 +54,22 @@ async function transferPlaylists() {
       const query = new SpotifyQueryBuilder()
         .addAlbum(appleTrack.attributes.albumName)
         .addArtist(appleTrack.attributes.artistName)
-        .addTrack(appleTrack.attributes.name)
+        .addTrack(appleTrack.attributes?.name)
         .build();
 
       const spotifyTracks = await spotify.api.searchTracks(query, { limit: 1 });
-      const tracks = spotifyTracks.body.tracks;
+      const track = spotifyTracks.body.tracks?.items.pop();
 
-      if (!tracks) {
+      if (!track) {
         continue;
       }
 
-      if (spotifyPlaylistTrackNames.has(tracks.items[0].name)) {
+      if (spotifyPlaylistTrackNames.has(track.name)) {
         continue;
       }
 
-      if (tracks.items.length) {
-        const id = isFavoriteSongs(applePlaylist)
-          ? tracks.items[0].id
-          : tracks.items[0].uri;
-
-        spotifyTrackIds.push(id);
-      }
+      const id = isFavoriteSongs(applePlaylist) ? track.id : track.uri;
+      spotifyTrackIds.push(id);
 
       if (isFavoriteSongs(applePlaylist) && spotifyTrackIds.length === 50) {
         await saveTracksToSpotifyPlaylist(applePlaylist, spotifyTrackIds);
@@ -103,7 +95,7 @@ async function transferAlbums() {
     }
 
     const query = new SpotifyQueryBuilder()
-      .addAlbum(album.attributes.name)
+      .addAlbum(album.attributes?.name)
       .addArtist(album.attributes.artistName)
       .build();
 
