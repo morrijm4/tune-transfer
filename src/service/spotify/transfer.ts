@@ -86,8 +86,8 @@ async function transferAlbums() {
     if (spotifyAlbum.body.albums?.items.length) {
       spotifyAlbums.push(spotifyAlbum.body.albums.items[0].id);
     }
-    await spotify.api.addToMySavedAlbums(spotifyAlbums);
   }
+  await spotify.api.addToMySavedAlbums(spotifyAlbums);
 }
 
 async function getSpotifyPlaylistId(applePlaylist: Playlist) {
