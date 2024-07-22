@@ -43,6 +43,10 @@ export class AppleMusicClient {
       },
     });
 
+    if (response.status === 404) {
+      return { data: [], meta: { total: 0 } };
+    }
+
     if (!response.ok) {
       console.error(await response.text());
       throw new Error('Failed to fetch');
